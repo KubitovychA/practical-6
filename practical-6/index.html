@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Практична робота №6 — стани екрана та дизайн-токени</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <h1 class="site-title">Трекер завдань</h1>
+      <nav class="site-nav" aria-label="Розділи">
+        <button type="button" class="btn btn--secondary is-active" data-view-btn="app" aria-pressed="true">Додаток</button>
+        <button type="button" class="btn btn--secondary" data-view-btn="kit" aria-pressed="false">UI-Kit</button>
+        <button type="button" class="btn btn--secondary" id="theme-toggle" aria-pressed="false">Темна тема</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+
+    <!-- ===================== РОЗДІЛ 1: ДОДАТОК ===================== -->
+    <section data-view="app" aria-labelledby="app-heading">
+      <h2 class="view-heading" id="app-heading">Мої завдання</h2>
+      <p class="view-lead">Екран має чотири взаємовиключні стани. Перемикайте їх кнопками нижче або користуйтесь додатком як звичайно: видаляйте завдання, шукайте, оновлюйте список.</p>
+
+      <div class="switcher" role="group" aria-label="Панель тестування станів">
+        <span class="switcher__label">Стан екрана:</span>
+        <button type="button" class="btn btn--secondary btn--small is-active" data-set-state="content" aria-pressed="true">Дані</button>
+        <button type="button" class="btn btn--secondary btn--small" data-set-state="loading" aria-pressed="false">Завантаження</button>
+        <button type="button" class="btn btn--secondary btn--small" data-set-state="empty" aria-pressed="false">Порожній</button>
+        <button type="button" class="btn btn--secondary btn--small" data-set-state="error" aria-pressed="false">Помилка</button>
+      </div>
+
+      <div class="toolbar">
+        <div class="field">
+          <label class="field__label" for="filter-input">Пошук завдань</label>
+          <input class="field__input" id="filter-input" type="search" placeholder="Наприклад, звіт" autocomplete="off">
+        </div>
+        <div>
+          <p class="toolbar__count" id="task-count" aria-live="polite"></p>
+          <button type="button" class="btn btn--primary" id="refresh-btn">Оновити</button>
+        </div>
+      </div>
+
+      <p class="visually-hidden" id="state-status" role="status"></p>
+
+      <div id="state-area" aria-busy="false">
+
+        <!-- loading -->
+        <div data-state="loading" class="is-hidden">
+          <div class="skeleton-list" aria-hidden="true">
+            <div class="card skeleton"><div class="skeleton__line skeleton__line--title"></div><div class="skeleton__line skeleton__line--text"></div></div>
+            <div class="card skeleton"><div class="skeleton__line skeleton__line--title"></div><div class="skeleton__line skeleton__line--text"></div></div>
+            <div class="card skeleton"><div class="skeleton__line skeleton__line--title"></div><div class="skeleton__line skeleton__line--text"></div></div>
+            <div class="card skeleton"><div class="skeleton__line skeleton__line--title"></div><div class="skeleton__line skeleton__line--text"></div></div>
+          </div>
+        </div>
+
+        <!-- content -->
+        <div data-state="content">
+          <ul class="task-list" id="task-list"></ul>
+        </div>
+
+        <!-- empty -->
+        <div data-state="empty" class="is-hidden">
+          <div class="state-message">
+            <svg class="state-message__icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="10" y="14" width="44" height="40" rx="6"></rect>
+              <path d="M10 28h44"></path>
+              <path d="M24 40h16"></path>
+              <path d="M22 8v10M42 8v10"></path>
+            </svg>
+            <h3 class="state-message__title" id="empty-title">Тут поки нічого немає</h3>
+            <p class="state-message__text" id="empty-text">Додайте перше завдання або відновіть початковий список.</p>
+            <button type="button" class="btn btn--primary" id="empty-cta">Відновити список</button>
+          </div>
+        </div>
+
+        <!-- error -->
+        <div data-state="error" class="is-hidden">
+          <div class="state-message state-message--error" role="alert">
+            <svg class="state-message__icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M32 8 58 54H6z"></path>
+              <path d="M32 26v14"></path>
+              <path d="M32 46v1"></path>
+            </svg>
+            <h3 class="state-message__title">Не вдалося завантажити завдання</h3>
+            <p class="state-message__text">Сервер не відповів. Перевірте з'єднання з інтернетом і спробуйте ще раз.</p>
+            <p class="state-message__code">Код помилки: 503 Service Unavailable</p>
+            <button type="button" class="btn btn--primary" id="retry-btn">Повторити спробу</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== РОЗДІЛ 2: UI-KIT ===================== -->
+    <section data-view="kit" class="is-hidden" aria-labelledby="kit-heading">
+      <h2 class="view-heading" id="kit-heading">UI-Kit: дизайн-система</h2>
+      <p class="view-lead">Усі компоненти нижче стилізовані токенами з <code>tokens.css</code>. Кнопка «Темна тема» у шапці змінює лише семантичні токени, а класи компонентів лишаються тими самими.</p>
+
+      <div class="kit-section">
+        <h3 class="block-title">Кнопки</h3>
+        <div class="kit-grid">
+          <div class="kit-cell">
+            <span class="kit-cell__caption">Primary — Default</span>
+            <button type="button" class="btn btn--primary">Зберегти</button>
+            <span class="kit-cell__caption">Hover</span>
+            <button type="button" class="btn btn--primary is-hover">Зберегти</button>
+            <span class="kit-cell__caption">Focus</span>
+            <button type="button" class="btn btn--primary is-focus">Зберегти</button>
+            <span class="kit-cell__caption">Disabled</span>
+            <button type="button" class="btn btn--primary" disabled>Зберегти</button>
+          </div>
+          <div class="kit-cell">
+            <span class="kit-cell__caption">Secondary — Default</span>
+            <button type="button" class="btn btn--secondary">Скасувати</button>
+            <span class="kit-cell__caption">Hover</span>
+            <button type="button" class="btn btn--secondary is-hover">Скасувати</button>
+            <span class="kit-cell__caption">Focus</span>
+            <button type="button" class="btn btn--secondary is-focus">Скасувати</button>
+            <span class="kit-cell__caption">Disabled</span>
+            <button type="button" class="btn btn--secondary" disabled>Скасувати</button>
+          </div>
+          <div class="kit-cell">
+            <span class="kit-cell__caption">Danger — Default</span>
+            <button type="button" class="btn btn--danger">Видалити</button>
+            <span class="kit-cell__caption">Hover</span>
+            <button type="button" class="btn btn--danger is-hover">Видалити</button>
+            <span class="kit-cell__caption">Focus</span>
+            <button type="button" class="btn btn--danger is-focus">Видалити</button>
+            <span class="kit-cell__caption">Disabled</span>
+            <button type="button" class="btn btn--danger" disabled>Видалити</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="kit-section">
+        <h3 class="block-title">Текстові поля</h3>
+        <div class="kit-grid">
+          <div class="field">
+            <label class="field__label" for="kit-default">Default</label>
+            <input class="field__input" id="kit-default" type="text" placeholder="Ваше ім'я">
+            <span class="field__hint">Підказка до поля</span>
+          </div>
+          <div class="field">
+            <label class="field__label" for="kit-focus">Focus</label>
+            <input class="field__input is-focus" id="kit-focus" type="text" value="Активне поле">
+          </div>
+          <div class="field">
+            <label class="field__label" for="kit-disabled">Disabled</label>
+            <input class="field__input" id="kit-disabled" type="text" value="Недоступне поле" disabled>
+          </div>
+          <div class="field has-error" id="kit-email-field">
+            <label class="field__label" for="kit-email">Error: перевірте e-mail</label>
+            <input class="field__input" id="kit-email" type="text" value="student@" aria-invalid="true" aria-describedby="kit-email-error">
+            <span class="field__error" id="kit-email-error">Введіть адресу у форматі name@example.com</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="kit-section">
+        <h3 class="block-title">Картка контенту</h3>
+        <div class="card card--stack">
+          <h4 class="card__title">Підготувати звіт до практичної</h4>
+          <p class="card__text">Уніфікована картка: заголовок, опис і тег. Однакова скрізь, де потрібен блок даних.</p>
+          <p><span class="tag">Звіт</span></p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
